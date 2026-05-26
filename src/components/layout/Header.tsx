@@ -55,6 +55,12 @@ export function Header({
             >
               Reader Feed
             </a>
+            <a
+              href="https://danieltibbing.github.io/china-news"
+              className="hover:text-gray-700 dark:hover:text-slate-200 transition-colors pb-0.5"
+            >
+              News Aggregator
+            </a>
           </div>
         </div>
       </div>
