@@ -2,12 +2,92 @@ import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import { parseStringPromise } from 'xml2js';
+import * as cheerio from 'cheerio';
 
 const CONFIG_PATH = path.resolve('scripts/newsletters_config.json');
 const DATABASE_PATH = path.resolve('public/articles.json');
 
 // Average reading speed (words per minute)
 const WPM = 225;
+
+// Throttle delay helper
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Specific selectors for different publication types to pull clean article bodies
+const PUBLISHER_SELECTORS = {
+  'sinocism': ['.available-content', '.body.markup', '.post-body', '.post-content'],
+  'pekingnology': ['.available-content', '.body.markup', '.post-body', '.post-content'],
+  'chinatalk': ['.available-content', '.body.markup', '.post-body', '.post-content'],
+  'realtime-mandarin': ['.available-content', '.body.markup', '.post-body', '.post-content'],
+  'trivium-china': ['.post-content', '.entry-content', 'article', '.entry'],
+  'merics-china-brief': ['.node__content', '.field--name-body', '.text-formatted', '.content'],
+  'carnegie-china': ['.article-body', '.article-content', '.entry-content', 'article'],
+  'wire-china-rss': ['.entry-content', '.article-body', '.post-content', 'article'],
+  'voa-chinese': ['.wsw', '#article-content', '.wsw__html', '#content']
+};
+
+const FALLBACK_SELECTORS = [
+  '.available-content',
+  '.body.markup',
+  '.entry-content',
+  '.post-content',
+  '.article-body',
+  '.article-content',
+  'article',
+  '.node__content',
+  '.wsw',
+  '#article-content'
+];
+
+// Helper to fetch live article webpage and extract the main content container
+async function fetchFullArticleHtml(url, pubId) {
+  if (!url || !url.startsWith('http')) return null;
+  
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9,zh-CN;q=0.8',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      },
+      timeout: 12000
+    });
+
+    const $ = cheerio.load(response.data);
+    
+    // Retrieve selectors configured for this specific publisher or fall back to general standard container classes
+    const selectors = PUBLISHER_SELECTORS[pubId] || FALLBACK_SELECTORS;
+    
+    let contentHtml = '';
+    
+    for (const selector of selectors) {
+      const el = $(selector);
+      if (el.length > 0) {
+        // Clean up unwanted tags (scripts, stylesheets, iframes, trackers)
+        el.find('script, style, iframe, link, noscript, svg, canvas').remove();
+        
+        // Remove common newsletter share buttons, login walls, and marketing noise
+        el.find('.button-wrapper, .subscribe-widget, .subscription-widget-wrap, .share-dialog, .post-ufi, .post-footer, .comments-section, .paywall-prompt').remove();
+        el.find('button, input, form').remove();
+        
+        // Extract HTML body
+        const html = el.html();
+        if (html && html.trim().length > 300) {
+          contentHtml = html.trim();
+          break;
+        }
+      }
+    }
+    
+    return contentHtml || null;
+  } catch (err) {
+    console.warn(`    ⚠️ Webpage scraping failed for ${url}: ${err.message}`);
+    return null;
+  }
+}
+
 
 // Helper to sanitize HTML content
 function sanitizeHtml(html) {
@@ -157,17 +237,58 @@ async function scrapeFeeds() {
             rawContent = typeof item.summary[0] === 'object' ? item.summary[0]._ : item.summary[0];
           }
 
-          const cleanContent = sanitizeHtml(rawContent);
-          const { wordCount, minutes } = calculateReadingTime(cleanContent);
+          // Check if article is in cache and contains full content already
+          const cachedArticle = articleCache.get(cleanId);
+          
+          // An article is considered "fully scraped" if it exists, is longer than 800 characters,
+          // and doesn't contain standard "Read more" links or truncation signatures.
+          const hasFullContent = cachedArticle && 
+                                 cachedArticle.content && 
+                                 cachedArticle.content.length > 800 && 
+                                 !cachedArticle.content.includes('Read more') &&
+                                 !cachedArticle.content.includes('继续阅读') &&
+                                 !cachedArticle.content.includes('阅读更多');
+
+          let content = '';
+          let wordCount = 0;
+          let readingTime = 0;
+
+          if (hasFullContent) {
+            // Reuse cached full article
+            content = cachedArticle.content;
+            wordCount = cachedArticle.wordCount;
+            readingTime = cachedArticle.readingTime;
+            console.log(`    ⚡ Reusing cached full article for: ${title.slice(0, 40)}...`);
+          } else {
+            // We need to fetch and scrape the full webpage or fall back to RSS description
+            console.log(`    🔍 Fetching full article text from webpage: ${link}`);
+            // Sleep for 600ms to throttle requests politely
+            await sleep(600);
+            const scrapedHtml = await fetchFullArticleHtml(link, pub.id);
+            
+            if (scrapedHtml) {
+              content = sanitizeHtml(scrapedHtml);
+              console.log(`    ✅ Successfully scraped full article (${content.length} chars).`);
+            } else {
+              // Fall back to RSS summary/content if page scraping fails
+              console.log(`    ⚠️ Scraper fallback: using RSS summary/description.`);
+              content = sanitizeHtml(rawContent);
+            }
+            
+            // Calculate correct reading time for full body
+            const metrics = calculateReadingTime(content);
+            wordCount = metrics.wordCount;
+            readingTime = metrics.minutes;
+          }
 
           const article = {
             id: cleanId,
             title,
             link,
             publishDate,
-            content: cleanContent,
+            content,
             wordCount,
-            readingTime: minutes,
+            readingTime,
             newsletterId: pub.id,
             newsletterTitle: pub.title
           };
