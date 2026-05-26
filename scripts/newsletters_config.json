@@ -1,0 +1,72 @@
+[
+  {
+    "id": "sinocism",
+    "title": "Sinocism",
+    "author": "Bill Bishop",
+    "description": "Essential analysis of Chinese politics, foreign policy, and elite CCP governance by the veteran creator of Sinocism.",
+    "accentColor": "text-red-600",
+    "rssUrl": "https://sinocism.com/feed",
+    "categories": ["Geopolitics & Politics", "Elite Governance"],
+    "icon": "🏮"
+  },
+  {
+    "id": "pekingnology",
+    "title": "Pekingnology",
+    "author": "Zichen Wang / CCG",
+    "description": "Providing translations, policy deep-dives, and sharp perspectives from inside Beijing's domestic policy networks and CCG scholars.",
+    "accentColor": "text-blue-600",
+    "rssUrl": "https://www.pekingnology.com/feed",
+    "categories": ["Geopolitics & Politics", "Culture & Society"],
+    "icon": "🏛️"
+  },
+  {
+    "id": "chinatalk",
+    "title": "ChinaTalk",
+    "author": "Jordan Schneider",
+    "description": "Highly acclaimed explorations of Chinese tech policy, semiconductor supply chains, geopolitical defense developments, and pop culture.",
+    "accentColor": "text-violet-600",
+    "rssUrl": "https://www.chinatalk.media/feed",
+    "categories": ["Tech & Business", "Geopolitics & Politics"],
+    "icon": "💻"
+  },
+  {
+    "id": "trivium-china",
+    "title": "Trivium China Briefs",
+    "author": "Trivium China Experts",
+    "description": "Weekly analytical briefings tracking the elite policy actions, domestic regulations, and macro-reforms drafted inside Zhongnanhai.",
+    "accentColor": "text-red-700",
+    "rssUrl": "https://triviumchina.com/feed",
+    "categories": ["Geopolitics & Politics", "Macroeconomics"],
+    "icon": "📊"
+  },
+  {
+    "id": "merics-china-brief",
+    "title": "MERICS China Briefing",
+    "author": "MERICS Research Team",
+    "description": "European insights, industrial policy critiques, and bilateral strategic breakdowns from Europe's leading China research institute.",
+    "accentColor": "text-sky-700",
+    "rssUrl": "https://merics.org/en/rss.xml",
+    "categories": ["Geopolitics & Politics", "Tech & Business"],
+    "icon": "🇪🇺"
+  },
+  {
+    "id": "carnegie-china",
+    "title": "Carnegie China Insights",
+    "author": "Carnegie Scholars",
+    "description": "Scholarly research and policy insights mapping the geopolitical and diplomatic footprints of China across global spheres.",
+    "accentColor": "text-indigo-900",
+    "rssUrl": "https://carnegiechina.org/rss/all",
+    "categories": ["Geopolitics & Politics"],
+    "icon": "🌍"
+  },
+  {
+    "id": "wire-china-rss",
+    "title": "The Wire China",
+    "author": "The Wire China Journalists",
+    "description": "Weekly investigative reports tracking corporate listings, economic transitions, and business footprints in Greater China.",
+    "accentColor": "text-rose-700",
+    "rssUrl": "https://www.thewirechina.com/feed",
+    "categories": ["Tech & Business"],
+    "icon": "🗞️"
+  }
+]
