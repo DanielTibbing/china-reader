@@ -68,5 +68,25 @@
     "rssUrl": "https://www.thewirechina.com/feed",
     "categories": ["Tech & Business"],
     "icon": "🗞️"
+  },
+  {
+    "id": "realtime-mandarin",
+    "title": "RealTime Mandarin (每周漫闻)",
+    "author": "Andrew Methven",
+    "description": "An exceptional weekly newsletter showcasing contemporary Chinese vocabulary, social trends, idioms, and internet slang from Chinese media. Perfect for Intermediate/Advanced learners.",
+    "accentColor": "text-emerald-600",
+    "rssUrl": "https://realtimemandarin.substack.com/feed",
+    "categories": ["Language & Culture", "Slang & Trends"],
+    "icon": "🐼"
+  },
+  {
+    "id": "voa-chinese",
+    "title": "VOA News 中文网",
+    "author": "Voice of America Chinese",
+    "description": "Standard native-level current affairs, economy, and global updates written in professional Simplified Chinese. Perfect for HSK 5/6 advanced vocabulary and translation studies.",
+    "accentColor": "text-blue-700",
+    "rssUrl": "https://www.voachinese.com/api/zm_yqebbyi",
+    "categories": ["News & Current Affairs", "Geopolitics"],
+    "icon": "📡"
   }
 ]
