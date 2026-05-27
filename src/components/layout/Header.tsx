@@ -1,4 +1,5 @@
 import { BookOpen, Search, Sun, Moon, Star, History, Newspaper } from 'lucide-react';
+import { SuiteSwitcher } from 'china-common';
 
 interface HeaderProps {
   searchQuery: string;
@@ -21,49 +22,7 @@ export function Header({
 }: HeaderProps) {
   return (
     <header className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-20 shadow-sm transition-colors duration-300">
-      {/* Global Suite Switcher */}
-      <div className="bg-gray-50 dark:bg-slate-950 border-b border-gray-200/80 dark:border-slate-800/80 py-2 text-xs font-semibold text-gray-500 dark:text-slate-400 transition-colors duration-300">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <a
-            href="https://danieltibbing.github.io/"
-            className="flex items-center gap-1.5 text-gray-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors uppercase tracking-wider font-extrabold text-[10px]"
-          >
-            <span>China Suite</span>
-          </a>
-          <div className="flex gap-4">
-            <a
-              href="https://danieltibbing.github.io/china-jobs"
-              className="hover:text-gray-700 dark:hover:text-slate-200 transition-colors pb-0.5"
-            >
-              Jobs Board
-            </a>
-            <a
-              href="https://danieltibbing.github.io/china-pods"
-              className="hover:text-gray-700 dark:hover:text-slate-200 transition-colors pb-0.5"
-            >
-              Podcast Hub
-            </a>
-            <a
-              href="https://danieltibbing.github.io/chinese-practice/"
-              className="hover:text-gray-700 dark:hover:text-slate-200 transition-colors pb-0.5"
-            >
-              Language Study
-            </a>
-            <a
-              href="https://danieltibbing.github.io/china-reader"
-              className="text-indigo-600 dark:text-indigo-400 font-bold border-b border-indigo-600 dark:border-indigo-400 pb-0.5"
-            >
-              Reader Feed
-            </a>
-            <a
-              href="https://danieltibbing.github.io/china-news"
-              className="hover:text-gray-700 dark:hover:text-slate-200 transition-colors pb-0.5"
-            >
-              News Aggregator
-            </a>
-          </div>
-        </div>
-      </div>
+      <SuiteSwitcher activeApp="reader" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
