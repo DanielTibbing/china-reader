@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+  # The scraper (update_articles.yml) pushes with GITHUB_TOKEN, which does not
+  # trigger push events, so redeploy after each completed scraper run instead.
+  workflow_run:
+    workflows: ["Update Newsletter Articles"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -13,6 +18,7 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
 
